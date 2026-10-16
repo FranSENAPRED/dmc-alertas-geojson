@@ -32,6 +32,26 @@ REGIONES_DMC = {
     "ip": "Valparaíso", "jf": "Valparaíso",
 }
 
+# Nombre breve y orden geográfico de norte a sur (1 a 16).
+REGIONES_ABREVIADAS = {
+    "Arica y Parinacota": ("Arica y Parinacota", 1),
+    "Tarapacá": ("Tarapacá", 2),
+    "Antofagasta": ("Antofagasta", 3),
+    "Atacama": ("Atacama", 4),
+    "Coquimbo": ("Coquimbo", 5),
+    "Valparaíso": ("Valparaíso", 6),
+    "Metropolitana de Santiago": ("Metropolitana", 7),
+    "Libertador General Bernardo O'Higgins": ("O'Higgins", 8),
+    "Maule": ("Maule", 9),
+    "Ñuble": ("Ñuble", 10),
+    "Biobío": ("Biobío", 11),
+    "La Araucanía": ("La Araucanía", 12),
+    "Los Ríos": ("Los Ríos", 13),
+    "Los Lagos": ("Los Lagos", 14),
+    "Aysén del General Carlos Ibáñez del Campo": ("Aysén", 15),
+    "Magallanes y de la Antártica Chilena": ("Magallanes", 16),
+}
+
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
 
@@ -177,10 +197,12 @@ def generar_geojson():
             continue
 
         for indice, geometria, region in elementos:
+            reg_n, reg_num = REGIONES_ABREVIADAS.get(region, (None, None))
             propiedades = {
                 "id": evento.get("id"), "codigoMeteo": codigo, "tipo": tipo,
                 "fenomeno": evento.get("fenomeno"), "titulo": evento.get("titulo"),
-                "region": region, "region_zona": indice,
+                "region": region, "reg_n": reg_n, "reg_num": reg_num,
+                "region_zona": indice,
                 "tipoZonaAfecta": modalidad, "desde": evento.get("desde"),
                 "hasta": evento.get("hasta"), "emision": evento.get("emision"),
                 "condicionSinoptica": evento.get("condicionSinoptica"),
@@ -208,10 +230,6 @@ def generar_geojson():
     logging.info("Productos AAA: %d", len(eventos))
     logging.info("Geometrías generadas: %d (%s)", len(resultado), dict(conteo))
     logging.info("Actualización UTC: %s", datetime.now(timezone.utc).isoformat())
-
-
-if __name__ == "__main__":
-    generar_geojson()
 
 
 if __name__ == "__main__":
